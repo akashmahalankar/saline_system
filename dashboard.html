@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Saline System Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex">
+  <div x-data="dashboard()" class="flex w-full">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-blue-900 text-white flex-shrink-0 flex flex-col p-4">
+      <h2 class="text-2xl font-bold mb-6">Floors</h2>
+      <div>
+        <template x-for="floor in [1,2,3,4,5]" :key="floor">
+          <button @click="$data.selected = floor" :class="$data.selected === floor ? 'bg-blue-700' : 'bg-blue-900'" class="w-full text-left px-4 py-2 rounded mb-2 font-semibold transition-colors">
+            Floor <span x-text="floor"></span>
+          </button>
+        </template>
+        <div class="mt-8">
+          <span class="text-sm">Select a floor to view patients</span>
+        </div>
+      </div>
+    </aside>
+    <!-- Main Dashboard -->
+    <main class="flex-1 p-8">
+      <h1 class="text-3xl font-bold mb-8 text-blue-900">Saline System Dashboard</h1>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+        <template x-for="patient in filteredPatients()" :key="patient.id">
+          <div class="bg-white rounded-2xl shadow-2xl p-8 flex flex-col justify-between border-4 border-blue-100 hover:border-blue-400 transition-all duration-300">
+            <div class="flex items-center mb-4">
+              <div class="w-14 h-14 rounded-full bg-blue-200 flex items-center justify-center text-blue-900 font-bold text-xl mr-4">
+                <span x-text="patient.bed"></span>
+              </div>
+              <div>
+                <h2 class="text-xl font-bold text-gray-800" x-text="patient.name"></h2>
+                <p class="text-gray-500 text-sm">Bed No.</p>
+              </div>
+            </div>
+            <div class="mb-2">
+              <p class="text-lg text-gray-700">Saline Level: <span class="font-bold" x-text="patient.salineLevel"></span> ml</p>
+            </div>
+            <div>
+              <template x-if="patient.salineLevel < patient.threshold">
+                <span class="inline-block bg-red-600 text-white px-4 py-2 rounded-lg mt-4 animate-pulse font-semibold text-center">ALERT: Low Saline!</span>
+              </template>
+              <template x-if="patient.salineLevel >= patient.threshold">
+                <span class="inline-block bg-green-500 text-white px-4 py-2 rounded-lg mt-4 font-semibold text-center">Normal</span>
+              </template>
+            </div>
+          </div>
+        </template>
+      </div>
+    </main>
+  </div>
+  <script>
+    function dashboard() {
+      return {
+        selected: 1,
+        patients: [
+          { id: 1, name: 'Amit Sharma', bed: '101', floor: 1, salineLevel: 120, threshold: 100 },
+          { id: 2, name: 'Priya Singh', bed: '102', floor: 1, salineLevel: 80, threshold: 100 },
+          { id: 3, name: 'Rahul Verma', bed: '201', floor: 2, salineLevel: 150, threshold: 100 },
+          { id: 4, name: 'Sneha Patel', bed: '202', floor: 2, salineLevel: 90, threshold: 100 },
+          { id: 5, name: 'Vikram Joshi', bed: '301', floor: 3, salineLevel: 110, threshold: 100 },
+          { id: 6, name: 'Anjali Rao', bed: '302', floor: 3, salineLevel: 60, threshold: 100 },
+          { id: 7, name: 'Manish Gupta', bed: '401', floor: 4, salineLevel: 130, threshold: 100 },
+          { id: 8, name: 'Ritu Mehra', bed: '402', floor: 4, salineLevel: 95, threshold: 100 },
+          { id: 9, name: 'Suresh Kumar', bed: '501', floor: 5, salineLevel: 140, threshold: 100 },
+          { id: 10, name: 'Neha Jain', bed: '502', floor: 5, salineLevel: 85, threshold: 100 }
+        ],
+        filteredPatients() {
+          return this.patients.filter(p => p.floor === this.selected);
+        }
+      }
+    }
+  </script>
+</body>
+</html>
